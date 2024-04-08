@@ -5,7 +5,6 @@ import (
 	"database/sql"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/pressly/goose/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/unbeman/av-banner-task/internal/storage"
 )
@@ -48,16 +47,13 @@ type pgStorage struct {
 	statements Statements
 }
 
-func NewPG(dsn string, migrationDirectory string) (storage.Database, error) {
+func NewPG(dsn string) (storage.Database, error) {
 	connection, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
 	}
 	pg := &pgStorage{connection: connection}
-	err = pg.migrate(migrationDirectory)
-	if err != nil {
-		return nil, err
-	}
+
 	pg.statements, err = NewStatements(connection)
 	if err != nil {
 		return nil, err
@@ -69,13 +65,6 @@ func (p *pgStorage) Shutdown() error {
 	err := p.connection.Close()
 	log.Infoln("db conn closed")
 	return err
-}
-
-func (p *pgStorage) migrate(directory string) error {
-	if err := goose.SetDialect("postgres"); err != nil {
-		return err
-	}
-	return goose.Up(p.connection, directory)
 }
 
 func (p *pgStorage) GetBanner(ctx context.Context, featureId int, tagId int, isActive bool) {

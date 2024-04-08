@@ -29,7 +29,7 @@ func (s BannerApplication) Stop() error {
 func GetBannerApplication(cfg config.Config) (*BannerApplication, error) {
 	// setup db
 	// setup server
-	pg, err := pg.NewPG(cfg.PostgreSqlDSN, cfg.MigrationDirectory)
+	pg, err := pg.NewPG(cfg.PostgreSqlDSN)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
