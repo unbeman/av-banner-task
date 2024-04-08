@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/handlers"
+	"github.com/unbeman/av-banner-task/internal/utils"
 	"net/http"
 )
 
@@ -12,8 +13,8 @@ type HTTPServer struct {
 	server *http.Server
 }
 
-func NewHTTPServer(addr string, ctrl *controller.Controller) (*HTTPServer, error) {
-	handler, err := handlers.NewHttpHandler(ctrl)
+func NewHTTPServer(addr string, ctrl *controller.Controller, jwtManager *utils.JWTManager) (*HTTPServer, error) {
+	handler, err := handlers.NewHttpHandler(ctrl, jwtManager)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup HTTP server: %w", err)
 	}

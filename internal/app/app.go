@@ -6,6 +6,7 @@ import (
 	controller "github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/storage"
 	"github.com/unbeman/av-banner-task/internal/storage/pg"
+	"github.com/unbeman/av-banner-task/internal/utils"
 )
 
 type BannerApplication struct {
@@ -28,16 +29,22 @@ func (s BannerApplication) Stop() error {
 func GetBannerApplication(cfg config.Config) (*BannerApplication, error) {
 	// setup db
 	// setup server
-	pg, err := pg.NewPG(cfg.PostgreSqlDSN)
+	pg, err := pg.NewPG(cfg.PostgreSqlDSN, cfg.MigrationDirectory)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
+
+	jwtManager, err := utils.NewJWTManager(cfg.JWTPrivateKey)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't setup jwt manager: %w", err)
+	}
+
 	ctrl, err := controller.NewController(pg)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
 
-	hs, err := NewHTTPServer(cfg.ServerAddress, ctrl)
+	hs, err := NewHTTPServer(cfg.ServerAddress, ctrl, jwtManager)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
