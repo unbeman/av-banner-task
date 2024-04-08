@@ -16,7 +16,7 @@ var (
 type Config struct {
 	ServerAddress string `env:"SERVER_ADDRESS"`
 	PostgreSqlDSN string `env:"POSTGRES_DSN"`
-	JWTPrivateKey string `env:"JWT_PRIVATE_KEY_FILE"`
+	JWTPrivateKey string `env:"JWT_PRIVATE_KEY"`
 }
 
 // parseEnv gets config setup from environment variables.
