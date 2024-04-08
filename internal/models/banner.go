@@ -11,12 +11,14 @@ type Banner struct {
 	FeatureId int   `json:"feature_id"`
 	TagIds    []int `json:"tags"`
 
-	Content  []byte `json:"content"`
+	Content  string `json:"content"`
 	IsActive bool   `json:"is_active"`
 
 	CreatedAt time.Time
 	DeletedAt time.Time
 }
+
+type Banners []*Banner
 
 type GetBannerInput struct {
 	TagId           int  `json:"tag_id"`
@@ -28,8 +30,7 @@ func (mr *GetBannerInput) Bind(r *http.Request) error {
 	return nil
 }
 
-type GetBannerOutput struct {
-}
+type GetBannerOutput string
 
 func (g GetBannerOutput) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil

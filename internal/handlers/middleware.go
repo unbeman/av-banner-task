@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"github.com/go-chi/render"
 	"github.com/unbeman/av-banner-task/internal/models"
 	"github.com/unbeman/av-banner-task/internal/utils"
@@ -14,6 +16,8 @@ const (
 	ADMIN = iota
 	USER
 )
+
+var AccessContextKey = "access"
 
 func (h HttpHandler) userAuthorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
@@ -28,12 +32,12 @@ func (h HttpHandler) userAuthorization(next http.Handler) http.Handler {
 			return
 		}
 
-		if userClaims.UserRole != ADMIN || userClaims.UserRole != USER {
-			render.JSON(writer, request, models.ErrForbidden(err))
+		if userClaims.UserRole != ADMIN && userClaims.UserRole != USER {
+			render.JSON(writer, request, models.ErrForbidden(fmt.Errorf("invalid user role")))
 			return
 		}
-
-		next.ServeHTTP(writer, request)
+		contextWithAccess := context.WithValue(request.Context(), AccessContextKey, userClaims.UserRole)
+		next.ServeHTTP(writer, request.WithContext(contextWithAccess))
 	})
 }
 

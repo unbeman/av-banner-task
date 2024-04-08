@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/unbeman/av-banner-task/internal/app"
 	"github.com/unbeman/av-banner-task/internal/config"
 	"log"
@@ -16,8 +17,9 @@ func main() {
 	}
 
 	//todo: setup logger
+	ctx := context.Background()
 
-	bannerApp, err := app.GetBannerApplication(cfg)
+	bannerApp, err := app.GetBannerApplication(ctx, cfg)
 	if err != nil {
 		log.Fatal(err)
 	}

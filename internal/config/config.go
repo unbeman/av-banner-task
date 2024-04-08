@@ -8,8 +8,8 @@ import (
 // Default values for config.
 var (
 	ServerAddressDefault = "0.0.0.0:8080"
-	PostgreSqlDSNDefault = "postgresql://postgres:1211@localhost:5432/bkeep"
-	JWTPrivateKeyDefault = ""
+	PostgreSqlDSNDefault = "postgresql://postgres:1211@localhost:5432/training"
+	JWTPrivateKeyDefault = "secret-key"
 )
 
 // Config describes server's configuration, including setup for its components.

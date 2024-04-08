@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"github.com/unbeman/av-banner-task/internal/config"
 	controller "github.com/unbeman/av-banner-task/internal/controller"
@@ -26,10 +27,8 @@ func (s BannerApplication) Stop() error {
 	return nil
 }
 
-func GetBannerApplication(cfg config.Config) (*BannerApplication, error) {
-	// setup db
-	// setup server
-	pg, err := pg.NewPG(cfg.PostgreSqlDSN)
+func GetBannerApplication(ctx context.Context, cfg config.Config) (*BannerApplication, error) {
+	pg, err := pg.NewPG(ctx, cfg.PostgreSqlDSN)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}

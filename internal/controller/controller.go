@@ -15,7 +15,19 @@ func NewController(db storage.Database) (*Controller, error) {
 	return ctrl, nil
 }
 
-func (c *Controller) GetBanner(ctx context.Context, input *models.GetBannerInput) (*models.GetBannerOutput, error) {
-	panic("implement me")
-	return nil, nil
+func (c *Controller) GetBannerForUser(ctx context.Context, input *models.GetBannerInput) (*models.GetBannerOutput, error) {
+	isActive := true
+	banner, err := c.database.GetBanner(ctx, input.FeatureId, input.TagId, &isActive)
+	if err != nil {
+		return nil, err
+	}
+	return (*models.GetBannerOutput)(&banner.Content), nil
+}
+
+func (c *Controller) GetBannerForAdmin(ctx context.Context, input *models.GetBannerInput) (*models.GetBannerOutput, error) {
+	banner, err := c.database.GetBanner(ctx, input.FeatureId, input.TagId, nil)
+	if err != nil {
+		return nil, err
+	}
+	return (*models.GetBannerOutput)(&banner.Content), nil
 }

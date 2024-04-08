@@ -11,16 +11,20 @@ var (
 )
 
 type JWTManager struct {
-	privateKey string
+	privateKey []byte
 }
 
 func NewJWTManager(privateKey string) (*JWTManager, error) {
-	return &JWTManager{privateKey: privateKey}, nil
+	return &JWTManager{privateKey: []byte(privateKey)}, nil
 }
 
 type UserClaims struct {
 	jwt.StandardClaims
-	UserRole int
+	UserRole int `json:"user_role"`
+}
+
+func (u UserClaims) Valid() error {
+	return nil
 }
 
 func (m *JWTManager) Verify(accessToken string) (*UserClaims, error) {
