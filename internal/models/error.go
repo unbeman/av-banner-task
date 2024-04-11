@@ -2,8 +2,9 @@ package models
 
 // todo: mb move to models?
 import (
-	"github.com/go-chi/render"
 	"net/http"
+
+	"github.com/go-chi/render"
 )
 
 type ErrResponse struct {

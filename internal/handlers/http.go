@@ -3,14 +3,18 @@ package handlers
 import (
 	"context"
 	"errors"
+	"net/http"
+	"strconv"
+
+	"github.com/chi-middleware/logrus-logger"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/models"
 	"github.com/unbeman/av-banner-task/internal/storage"
 	"github.com/unbeman/av-banner-task/internal/utils"
-	"net/http"
-	"strconv"
 )
 
 const BannerIDParam = "id"
@@ -27,6 +31,7 @@ func NewHttpHandler(ctrl *controller.Controller, jwtManager *utils.JWTManager) (
 		controller: ctrl,
 		jwtManager: jwtManager,
 	}
+	h.Use(logger.Logger("router", log.StandardLogger()))
 	h.Route("/", func(router chi.Router) {
 		router.Group(func(userRouter chi.Router) {
 			userRouter.Use(h.userAuthorization)

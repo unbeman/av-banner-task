@@ -3,8 +3,9 @@ package utils
 import (
 	"errors"
 	"fmt"
+
+	"github.com/dgrijalva/jwt-go"
 )
-import "github.com/dgrijalva/jwt-go"
 
 var (
 	ErrInvalidToken = errors.New("invalid token")

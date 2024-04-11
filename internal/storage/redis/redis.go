@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
+
 	"github.com/unbeman/av-banner-task/internal/storage"
-	"time"
 )
 
 type redisManager struct {

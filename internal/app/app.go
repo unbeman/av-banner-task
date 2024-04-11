@@ -3,8 +3,9 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/unbeman/av-banner-task/internal/config"
-	controller "github.com/unbeman/av-banner-task/internal/controller"
+	"github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/storage"
 	"github.com/unbeman/av-banner-task/internal/storage/pg"
 	"github.com/unbeman/av-banner-task/internal/storage/redis"
@@ -17,18 +18,14 @@ type BannerApplication struct {
 	server   *HTTPServer
 }
 
-func (s BannerApplication) Run() error {
-	// todo: wait group
+func (s BannerApplication) Run() {
 	s.server.Run()
-	return nil
 }
 
-func (s BannerApplication) Stop() error {
-	// todo: graceful shutdown
+func (s BannerApplication) Stop() {
 	s.server.Close()
-	s.cache.Shutdown()
 	s.database.Shutdown()
-	return nil
+	s.cache.Shutdown()
 }
 
 func GetBannerApplication(ctx context.Context, cfg config.Config) (*BannerApplication, error) {

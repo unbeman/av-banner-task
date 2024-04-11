@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
-	"github.com/unbeman/av-banner-task/internal/app"
-	"github.com/unbeman/av-banner-task/internal/config"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
+
+	"github.com/unbeman/av-banner-task/internal/app"
+	"github.com/unbeman/av-banner-task/internal/config"
 )
 
 func main() {
@@ -16,7 +18,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//todo: setup logger
+	level, err := log.ParseLevel(cfg.LogLevel)
+	log.SetLevel(level)
+
 	ctx := context.Background()
 
 	bannerApp, err := app.GetBannerApplication(ctx, cfg)
@@ -24,6 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	done := make(chan struct{}, 1)
 	// func waits signal to stop program
 	go func() {
 		exit := make(chan os.Signal, 1)
@@ -39,7 +44,8 @@ func main() {
 		log.Printf("Got signal '%v'\n", sig)
 
 		bannerApp.Stop()
+		done <- struct{}{}
 	}()
-
 	bannerApp.Run()
+	<-done
 }

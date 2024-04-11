@@ -3,10 +3,13 @@ package app
 import (
 	"context"
 	"fmt"
+	"net/http"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/handlers"
 	"github.com/unbeman/av-banner-task/internal/utils"
-	"net/http"
 )
 
 type HTTPServer struct {
@@ -32,10 +35,12 @@ func (h *HTTPServer) GetAddress() string {
 	return h.server.Addr
 }
 
-func (h *HTTPServer) Run() error {
-	return h.server.ListenAndServe()
+func (h *HTTPServer) Run() {
+	log.Info("starting HTTP server on ", h.GetAddress())
+	h.server.ListenAndServe()
 }
 
-func (h *HTTPServer) Close() error {
-	return h.server.Shutdown(context.TODO())
+func (h *HTTPServer) Close() {
+	log.Info("http server closed")
+	h.server.Shutdown(context.TODO())
 }

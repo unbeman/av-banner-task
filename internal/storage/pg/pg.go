@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	log "github.com/sirupsen/logrus"
+
 	"github.com/unbeman/av-banner-task/internal/models"
 	"github.com/unbeman/av-banner-task/internal/storage"
 )
@@ -90,7 +92,7 @@ func NewPG(ctx context.Context, dsn string) (storage.Database, error) {
 
 func (p *pgStorage) Shutdown() {
 	p.connection.Close()
-	log.Info("db conn pool closed")
+	log.Info("postgresql connection pool closed")
 }
 
 func (p *pgStorage) GetBanner(ctx context.Context, featureId int, tagId int, isActive *bool) (*models.Banner, error) {

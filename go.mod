@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	github.com/caarlos0/env/v8 v8.0.0
+	github.com/chi-middleware/logrus-logger v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/render v1.0.3

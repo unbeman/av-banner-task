@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-chi/render"
-	"github.com/unbeman/av-banner-task/internal/models"
-	"github.com/unbeman/av-banner-task/internal/utils"
 	"net/http"
 	"strings"
+
+	"github.com/go-chi/render"
+
+	"github.com/unbeman/av-banner-task/internal/models"
+	"github.com/unbeman/av-banner-task/internal/utils"
 )
 
 // Access levels for requests.

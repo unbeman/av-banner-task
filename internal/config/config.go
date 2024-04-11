@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"github.com/caarlos0/env/v8"
 	"time"
+
+	"github.com/caarlos0/env/v8"
 )
 
 // Default values for config.
@@ -13,6 +14,7 @@ var (
 	JWTPrivateKeyDefault           = "secret-key"
 	RedisURlDefault                = "redis://default:redis-password@localhost:6379/0"
 	RedisExpirationDurationDefault = 5 * time.Minute
+	LogLevelDefault                = "info"
 )
 
 // Config describes server's configuration, including setup for its components.
@@ -22,6 +24,7 @@ type Config struct {
 	JWTPrivateKey           string        `env:"JWT_PRIVATE_KEY"`
 	RedisURl                string        `env:"REDIS_URL"`
 	RedisExpirationDuration time.Duration `env:"REDIS_EXPIRATION_DURATION"`
+	LogLevel                string
 }
 
 // parseEnv gets config setup from environment variables.
@@ -37,6 +40,7 @@ func GetConfig() (Config, error) {
 		JWTPrivateKey:           JWTPrivateKeyDefault,
 		RedisURl:                RedisURlDefault,
 		RedisExpirationDuration: RedisExpirationDurationDefault,
+		LogLevel:                LogLevelDefault,
 	}
 	if err := cfg.parseEnv(); err != nil {
 		return cfg, fmt.Errorf("could not load config from env: %w", err)
