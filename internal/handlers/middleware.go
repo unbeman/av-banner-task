@@ -55,7 +55,7 @@ func (h HttpHandler) adminAuthorization(next http.Handler) http.Handler {
 		}
 
 		if userClaims.UserRole != ADMIN {
-			render.JSON(writer, request, models.ErrForbidden(err))
+			render.JSON(writer, request, models.ErrForbidden(fmt.Errorf("no access with given token")))
 			return
 		}
 

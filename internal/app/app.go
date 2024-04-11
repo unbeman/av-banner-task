@@ -7,12 +7,14 @@ import (
 	controller "github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/storage"
 	"github.com/unbeman/av-banner-task/internal/storage/pg"
+	"github.com/unbeman/av-banner-task/internal/storage/redis"
 	"github.com/unbeman/av-banner-task/internal/utils"
 )
 
 type BannerApplication struct {
-	storage storage.Database
-	server  *HTTPServer
+	database storage.Database
+	cache    storage.Cache
+	server   *HTTPServer
 }
 
 func (s BannerApplication) Run() error {
@@ -24,6 +26,8 @@ func (s BannerApplication) Run() error {
 func (s BannerApplication) Stop() error {
 	// todo: graceful shutdown
 	s.server.Close()
+	s.cache.Shutdown()
+	s.database.Shutdown()
 	return nil
 }
 
@@ -33,12 +37,17 @@ func GetBannerApplication(ctx context.Context, cfg config.Config) (*BannerApplic
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
 
-	jwtManager, err := utils.NewJWTManager(cfg.JWTPrivateKey)
+	redisManager, err := redis.NewRedisManager(cfg.RedisURl, cfg.RedisExpirationDuration)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't setup jwt manager: %w", err)
+		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
 
-	ctrl, err := controller.NewController(pg)
+	jwtManager, err := utils.NewJWTManager(cfg.JWTPrivateKey)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't setup application: %w", err)
+	}
+
+	ctrl, err := controller.NewController(pg, redisManager)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
@@ -49,8 +58,9 @@ func GetBannerApplication(ctx context.Context, cfg config.Config) (*BannerApplic
 	}
 
 	service := &BannerApplication{
-		storage: pg,
-		server:  hs,
+		database: pg,
+		cache:    redisManager,
+		server:   hs,
 	}
 	return service, nil
 }
