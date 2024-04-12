@@ -169,7 +169,7 @@ func (h HttpHandler) CreateBanner(writer http.ResponseWriter, request *http.Requ
 // @Accept json
 // @Produce json
 // @Param id path integer true "Идентификатор баннера"
-// @Param input body models.GetBannersInput true "Информация об обновлении баннера"
+// @Param input body models.UpdateBannerInput true "Информация об обновлении баннера"
 // @Success 200 {object} models.Banners
 // @Failure 400 {object} models.ErrResponse
 // @Failure 401 {object} models.ErrResponse

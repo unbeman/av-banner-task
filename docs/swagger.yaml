@@ -35,6 +35,19 @@ definitions:
       tagId:
         type: integer
     type: object
+  models.UpdateBannerInput:
+    properties:
+      content:
+        type: string
+      feature_id:
+        type: integer
+      is_active:
+        type: boolean
+      tag_ids:
+        items:
+          type: integer
+        type: array
+    type: object
 info:
   contact: {}
   title: Banner service
@@ -192,7 +205,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.GetBannersInput'
+          $ref: '#/definitions/models.UpdateBannerInput'
       produces:
       - application/json
       responses:

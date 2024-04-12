@@ -255,7 +255,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.GetBannersInput"
+                            "$ref": "#/definitions/models.UpdateBannerInput"
                         }
                     }
                 ],
@@ -430,6 +430,26 @@ const docTemplate = `{
                 },
                 "tagId": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.UpdateBannerInput": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "feature_id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         }
