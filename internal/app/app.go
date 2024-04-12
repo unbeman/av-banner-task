@@ -6,15 +6,14 @@ import (
 
 	"github.com/unbeman/av-banner-task/internal/config"
 	"github.com/unbeman/av-banner-task/internal/controller"
-	"github.com/unbeman/av-banner-task/internal/storage"
 	"github.com/unbeman/av-banner-task/internal/storage/pg"
 	"github.com/unbeman/av-banner-task/internal/storage/redis"
 	"github.com/unbeman/av-banner-task/internal/utils"
 )
 
 type BannerApplication struct {
-	database storage.Database
-	cache    storage.Cache
+	database *pg.PGStorage
+	cache    *redis.RedisManager
 	server   *HTTPServer
 }
 

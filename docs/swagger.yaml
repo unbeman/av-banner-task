@@ -1,0 +1,282 @@
+definitions:
+  models.Banner:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      feature_id:
+        type: integer
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      tag_ids:
+        items:
+          type: integer
+        type: array
+      update_at:
+        type: string
+    type: object
+  models.ErrResponse:
+    properties:
+      error:
+        description: application-level error message, for debugging
+        type: string
+    type: object
+  models.GetBannersInput:
+    properties:
+      featureId:
+        type: integer
+      limit:
+        type: integer
+      offset:
+        type: integer
+      tagId:
+        type: integer
+    type: object
+info:
+  contact: {}
+  title: Banner service
+  version: "1.0"
+paths:
+  /banner:
+    get:
+      description: Возвращает список баннеров по заданной фильтрации feature_id и/или
+        tag_id
+      parameters:
+      - description: Идентификатор фичи
+        in: query
+        name: feature_id
+        type: integer
+      - description: Идентификатор тэга
+        in: query
+        name: tag_id
+        type: integer
+      - description: Лимит выдачи
+        in: query
+        name: limit
+        type: integer
+      - description: Сдвиг выдачи
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Banner'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Получение списка баннеров
+    post:
+      consumes:
+      - application/json
+      description: Заводит новый баннер с заданными полями
+      parameters:
+      - description: Информация о добавляемом баннере
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetBannersInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/models.Banner'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Создание баннера
+  /banner/{id}:
+    delete:
+      description: Удаляет баннер по заданному идентификатору
+      parameters:
+      - description: Идентификатор баннера
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            items:
+              $ref: '#/definitions/models.Banner'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Удаление баннера баннера
+    patch:
+      consumes:
+      - application/json
+      description: Обновляет параметры существующего баннера
+      parameters:
+      - description: Идентификатор баннера
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Информация об обновлении баннера
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetBannersInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Banner'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Обновление баннера
+  /user_banner:
+    get:
+      description: Возвращает баннер по заданному feature_id и tag_id
+      parameters:
+      - description: Идентификатор фичи
+        in: query
+        name: feature_id
+        required: true
+        type: integer
+      - description: Идентификатор тэга
+        in: query
+        name: tag_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Получение баннера
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

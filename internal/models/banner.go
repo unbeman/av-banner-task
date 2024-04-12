@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -37,12 +38,25 @@ func (b Banners) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 type GetBannerInput struct {
-	TagId           int  `json:"tag_id"`
-	FeatureId       int  `json:"feature_id"`
-	UseLastRevision bool `json:"use_last_revision,omitempty"`
+	TagId           int
+	FeatureId       int
+	UseLastRevision bool
 }
 
-func (gbi *GetBannerInput) Bind(r *http.Request) error {
+func (i *GetBannerInput) FromURI(r *http.Request) error {
+	tagParam := r.URL.Query().Get("tag_id")
+	tagId, err := strconv.Atoi(tagParam)
+	if err != nil {
+		return err
+	}
+	i.TagId = tagId
+
+	featureParam := r.URL.Query().Get("feature_id")
+	featureId, err := strconv.Atoi(featureParam)
+	if err != nil {
+		return err
+	}
+	i.FeatureId = featureId
 	return nil
 }
 
@@ -53,13 +67,48 @@ func (gbo GetBannerOutput) Render(w http.ResponseWriter, r *http.Request) error 
 }
 
 type GetBannersInput struct {
-	TagId     *int `json:"tag_id,omitempty"`
-	FeatureId *int `json:"feature_id,omitempty"`
-	Limit     *int `json:"limit,omitempty"`
-	Offset    *int `json:"offset,omitempty"`
+	TagId     *int
+	FeatureId *int
+	Limit     *int
+	Offset    *int
 }
 
-func (gbi GetBannersInput) Bind(r *http.Request) error {
+func (i *GetBannersInput) FromURI(r *http.Request) error {
+	tagParam := r.URL.Query().Get("tag_id")
+	if tagParam != "" {
+		tagId, err := strconv.Atoi(tagParam)
+		if err != nil {
+			return err
+		}
+		i.TagId = &tagId
+	}
+
+	featureParam := r.URL.Query().Get("feature_id")
+	if featureParam != "" {
+		featureId, err := strconv.Atoi(featureParam)
+		if err != nil {
+			return err
+		}
+		i.FeatureId = &featureId
+	}
+
+	limitParam := r.URL.Query().Get("limit")
+	if limitParam != "" {
+		limit, err := strconv.Atoi(limitParam)
+		if err != nil {
+			return err
+		}
+		i.Limit = &limit
+	}
+
+	offsetParam := r.URL.Query().Get("offset")
+	if limitParam != "" {
+		offset, err := strconv.Atoi(offsetParam)
+		if err != nil {
+			return err
+		}
+		i.Offset = &offset
+	}
 	return nil
 }
 

@@ -12,25 +12,25 @@ import (
 	"github.com/unbeman/av-banner-task/internal/storage"
 )
 
-type redisManager struct {
+type RedisManager struct {
 	client     *redis.Client
 	expiration time.Duration
 }
 
-func NewRedisManager(redisURL string, expiration time.Duration) (storage.Cache, error) {
+func NewRedisManager(redisURL string, expiration time.Duration) (*RedisManager, error) {
 	opt, err := redis.ParseURL(redisURL)
 	if err != nil {
 		return nil, err
 	}
 	client := redis.NewClient(opt)
-	return &redisManager{
+	return &RedisManager{
 		client:     client,
 		expiration: expiration,
 	}, nil
 
 }
 
-func (r redisManager) SetBanner(ctx context.Context, featureId, tagId int, bannerContent *string) error {
+func (r RedisManager) SetBanner(ctx context.Context, featureId, tagId int, bannerContent *string) error {
 	key := fmt.Sprintf("%d-%d", featureId, tagId)
 	err := r.client.Set(ctx, key, bannerContent, r.expiration).Err()
 	if err != nil {
@@ -39,7 +39,7 @@ func (r redisManager) SetBanner(ctx context.Context, featureId, tagId int, banne
 	return nil
 }
 
-func (r redisManager) GetBanner(ctx context.Context, featureId, tagId int) (*string, error) {
+func (r RedisManager) GetBanner(ctx context.Context, featureId, tagId int) (*string, error) {
 	var bannerContent string
 	key := fmt.Sprintf("%d-%d", featureId, tagId)
 	bannerContent, err := r.client.Get(ctx, key).Result()
@@ -52,7 +52,7 @@ func (r redisManager) GetBanner(ctx context.Context, featureId, tagId int) (*str
 	return &bannerContent, nil
 }
 
-func (r redisManager) Shutdown() {
+func (r RedisManager) Shutdown() {
 	r.client.Close()
 	log.Info("redis client closed")
 }

@@ -31,6 +31,10 @@ func NewHTTPServer(addr string, ctrl *controller.Controller, jwtManager *utils.J
 	return hs, nil
 }
 
+func (h *HTTPServer) GetServer() *http.Server {
+	return h.server
+}
+
 func (h *HTTPServer) GetAddress() string {
 	return h.server.Addr
 }

@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-
 	"github.com/unbeman/av-banner-task/internal/models"
 )
 
@@ -12,6 +11,4 @@ type Database interface {
 	CreateBanner(ctx context.Context, banner *models.Banner) (*models.Banner, error)
 	UpdateBanner(ctx context.Context, banner *models.UpdateBannerInput) error
 	DeleteBanner(ctx context.Context, bannerId int) error
-
-	Shutdown()
 }

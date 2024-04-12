@@ -76,26 +76,26 @@ offset @offset`
 	deleteBannerByIdQuery = `delete from banner where id=$1`
 )
 
-type pgStorage struct {
+type PGStorage struct {
 	connection *pgxpool.Pool
 }
 
-func NewPG(ctx context.Context, dsn string) (storage.Database, error) {
+func NewPG(ctx context.Context, dsn string) (*PGStorage, error) {
 	connPool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, err
 	}
-	pg := &pgStorage{connection: connPool}
+	pg := &PGStorage{connection: connPool}
 
 	return pg, nil
 }
 
-func (p *pgStorage) Shutdown() {
+func (p *PGStorage) Shutdown() {
 	p.connection.Close()
 	log.Info("postgresql connection pool closed")
 }
 
-func (p *pgStorage) GetBanner(ctx context.Context, featureId int, tagId int, isActive *bool) (*models.Banner, error) {
+func (p *PGStorage) GetBanner(ctx context.Context, featureId int, tagId int, isActive *bool) (*models.Banner, error) {
 	banner := &models.Banner{}
 
 	err := p.connection.QueryRow(ctx, getBannerQuery, featureId, tagId, isActive).Scan(&banner.Content, &banner.IsActive)
@@ -108,7 +108,7 @@ func (p *pgStorage) GetBanner(ctx context.Context, featureId int, tagId int, isA
 	return banner, nil
 }
 
-func (p *pgStorage) GetBanners(ctx context.Context, featureId *int, tagId *int, limit *int, offset *int) (*models.Banners, error) {
+func (p *PGStorage) GetBanners(ctx context.Context, featureId *int, tagId *int, limit *int, offset *int) (*models.Banners, error) {
 	var query string
 
 	if tagId != nil {
@@ -135,7 +135,7 @@ func (p *pgStorage) GetBanners(ctx context.Context, featureId *int, tagId *int, 
 	return &banners, nil
 }
 
-func (p *pgStorage) CreateBanner(ctx context.Context, banner *models.Banner) (*models.Banner, error) {
+func (p *PGStorage) CreateBanner(ctx context.Context, banner *models.Banner) (*models.Banner, error) {
 	tx, err := p.connection.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return nil, err
@@ -178,7 +178,7 @@ func (p *pgStorage) CreateBanner(ctx context.Context, banner *models.Banner) (*m
 	return banner, err
 }
 
-func (p *pgStorage) updateBannerFeaturesAndTags(ctx context.Context, tx pgx.Tx, banner *models.UpdateBannerInput) error {
+func (p *PGStorage) updateBannerFeaturesAndTags(ctx context.Context, tx pgx.Tx, banner *models.UpdateBannerInput) error {
 	switch {
 	case banner.FeatureId != nil && banner.TagIds != nil: // обновить и фичу и тэги
 		_, err := tx.Exec(ctx, updateBannerFeatureQuery, banner.FeatureId, banner.Id) // обвновляем фичу в баннере
@@ -235,7 +235,7 @@ func (p *pgStorage) updateBannerFeaturesAndTags(ctx context.Context, tx pgx.Tx, 
 	return nil
 }
 
-func (p *pgStorage) updateBannerInfo(ctx context.Context, tx pgx.Tx, banner *models.UpdateBannerInput) error {
+func (p *PGStorage) updateBannerInfo(ctx context.Context, tx pgx.Tx, banner *models.UpdateBannerInput) error {
 	if banner.IsActive != nil {
 		_, err := tx.Exec(ctx, updateBannerActiveQuery, *banner.IsActive, banner.Id)
 		if err != nil {
@@ -252,7 +252,7 @@ func (p *pgStorage) updateBannerInfo(ctx context.Context, tx pgx.Tx, banner *mod
 	return nil
 }
 
-func (p *pgStorage) UpdateBanner(ctx context.Context, banner *models.UpdateBannerInput) error {
+func (p *PGStorage) UpdateBanner(ctx context.Context, banner *models.UpdateBannerInput) error {
 	tx, err := p.connection.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
@@ -279,7 +279,7 @@ func (p *pgStorage) UpdateBanner(ctx context.Context, banner *models.UpdateBanne
 	return nil
 }
 
-func (p *pgStorage) DeleteBanner(ctx context.Context, bannerId int) error {
+func (p *PGStorage) DeleteBanner(ctx context.Context, bannerId int) error {
 	tx, err := p.connection.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
@@ -316,7 +316,7 @@ func checkConflictErr(err error) error {
 			return storage.ErrNotFound
 		}
 		if pgErr.Code == pgerrcode.UniqueViolation {
-			return storage.ErrAlreadyExists
+			return storage.ErrConflict
 		}
 	}
 	return err
