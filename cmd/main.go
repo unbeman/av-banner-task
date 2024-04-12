@@ -12,6 +12,13 @@ import (
 	"github.com/unbeman/av-banner-task/internal/config"
 )
 
+// @title Banner service
+// @version 1.0
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
+// @BasePath /
 func main() {
 	cfg, err := config.GetConfig()
 	if err != nil {

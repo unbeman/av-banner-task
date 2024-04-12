@@ -1,6 +1,5 @@
 DB_URL=postgresql://postgres:password@localhost:6500/banner-keeper?sslmode=disable
 
-
 create-db:
 	docker exec -it banner-database createdb --username=postgres --owner=postgres banner-keeper
 
@@ -12,3 +11,6 @@ migrate-up:
 
 migrate-down:
 	migrate -path migrations -database "$(DB_URL)" -verbose down
+
+swagger:
+	swag init -g cmd/main.go
