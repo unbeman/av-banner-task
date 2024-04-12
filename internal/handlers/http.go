@@ -134,7 +134,7 @@ func (h HttpHandler) GetBanners(writer http.ResponseWriter, request *http.Reques
 // @Description Заводит новый баннер с заданными полями
 // @Accept json
 // @Produce json
-// @Param input body models.GetBannersInput true "Информация о добавляемом баннере"
+// @Param input body models.Banner true "Информация о добавляемом баннере"
 // @Success 201 {object} models.Banners
 // @Failure 400 {object} models.ErrResponse
 // @Failure 401 {object} models.ErrResponse
@@ -217,7 +217,7 @@ func (h HttpHandler) UpdateBanner(writer http.ResponseWriter, request *http.Requ
 // @Description Удаляет баннер по заданному идентификатору
 // @Produce json
 // @Param id path integer true "Идентификатор баннера"
-// @Success 204 {object} models.Banners
+// @Success 204
 // @Failure 400 {object} models.ErrResponse
 // @Failure 401 {object} models.ErrResponse
 // @Failure 403 {object} models.ErrResponse

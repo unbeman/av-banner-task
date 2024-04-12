@@ -24,17 +24,6 @@ definitions:
         description: application-level error message, for debugging
         type: string
     type: object
-  models.GetBannersInput:
-    properties:
-      featureId:
-        type: integer
-      limit:
-        type: integer
-      offset:
-        type: integer
-      tagId:
-        type: integer
-    type: object
   models.UpdateBannerInput:
     properties:
       content:
@@ -112,7 +101,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.GetBannersInput'
+          $ref: '#/definitions/models.Banner'
       produces:
       - application/json
       responses:
@@ -163,10 +152,6 @@ paths:
       responses:
         "204":
           description: No Content
-          schema:
-            items:
-              $ref: '#/definitions/models.Banner'
-            type: array
         "400":
           description: Bad Request
           schema:

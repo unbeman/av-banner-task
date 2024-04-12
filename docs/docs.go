@@ -111,7 +111,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.GetBannersInput"
+                            "$ref": "#/definitions/models.Banner"
                         }
                     }
                 ],
@@ -187,13 +187,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Banner"
-                            }
-                        }
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -413,23 +407,6 @@ const docTemplate = `{
                 "error": {
                     "description": "application-level error message, for debugging",
                     "type": "string"
-                }
-            }
-        },
-        "models.GetBannersInput": {
-            "type": "object",
-            "properties": {
-                "featureId": {
-                    "type": "integer"
-                },
-                "limit": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "tagId": {
-                    "type": "integer"
                 }
             }
         },
