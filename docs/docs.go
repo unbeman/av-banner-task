@@ -111,7 +111,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Banner"
+                            "$ref": "#/definitions/models.CreateBannerInput"
                         }
                     }
                 ],
@@ -119,10 +119,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Banner"
-                            }
+                            "$ref": "#/definitions/models.CreateBannerOutput"
                         }
                     },
                     "400": {
@@ -255,13 +252,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Banner"
-                            }
-                        }
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -375,6 +366,9 @@ const docTemplate = `{
         "models.Banner": {
             "type": "object",
             "properties": {
+                "banner_id": {
+                    "type": "integer"
+                },
                 "content": {
                     "type": "string"
                 },
@@ -382,9 +376,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "feature_id": {
-                    "type": "integer"
-                },
-                "id": {
                     "type": "integer"
                 },
                 "is_active": {
@@ -401,11 +392,39 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreateBannerInput": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "feature_id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "models.CreateBannerOutput": {
+            "type": "object",
+            "properties": {
+                "banner_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ErrResponse": {
             "type": "object",
             "properties": {
                 "error": {
-                    "description": "application-level error message, for debugging",
+                    "description": "application error message",
                     "type": "string"
                 }
             }

@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"errors"
-
 	"github.com/unbeman/av-banner-task/internal/models"
 	"github.com/unbeman/av-banner-task/internal/storage"
 )
@@ -60,8 +59,14 @@ func (c *Controller) GetBanners(ctx context.Context, input *models.GetBannersInp
 	return c.database.GetBanners(ctx, input.FeatureId, input.TagId, input.Limit, input.Offset)
 }
 
-func (c *Controller) CreateBanner(ctx context.Context, input *models.Banner) (*models.CreateBannerOutput, error) {
-	banner, err := c.database.CreateBanner(ctx, input)
+func (c *Controller) CreateBanner(ctx context.Context, input *models.CreateBannerInput) (*models.CreateBannerOutput, error) {
+	banner := &models.Banner{
+		FeatureId: input.FeatureId,
+		TagIds:    input.TagIds,
+		Content:   input.Content,
+		IsActive:  input.IsActive,
+	}
+	banner, err := c.database.CreateBanner(ctx, banner)
 	if err != nil {
 		return nil, err
 	}

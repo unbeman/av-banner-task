@@ -134,8 +134,8 @@ func (h HttpHandler) GetBanners(writer http.ResponseWriter, request *http.Reques
 // @Description Заводит новый баннер с заданными полями
 // @Accept json
 // @Produce json
-// @Param input body models.Banner true "Информация о добавляемом баннере"
-// @Success 201 {object} models.Banners
+// @Param input body models.CreateBannerInput true "Информация о добавляемом баннере"
+// @Success 201 {object} models.CreateBannerOutput
 // @Failure 400 {object} models.ErrResponse
 // @Failure 401 {object} models.ErrResponse
 // @Failure 403 {object} models.ErrResponse
@@ -145,7 +145,7 @@ func (h HttpHandler) GetBanners(writer http.ResponseWriter, request *http.Reques
 // @Security Bearer
 // @Router /banner [post]
 func (h HttpHandler) CreateBanner(writer http.ResponseWriter, request *http.Request) {
-	input := &models.Banner{}
+	input := &models.CreateBannerInput{}
 	if err := render.Bind(request, input); err != nil {
 		render.Render(writer, request, models.ErrBadRequest(err))
 		return
@@ -170,7 +170,7 @@ func (h HttpHandler) CreateBanner(writer http.ResponseWriter, request *http.Requ
 // @Produce json
 // @Param id path integer true "Идентификатор баннера"
 // @Param input body models.UpdateBannerInput true "Информация об обновлении баннера"
-// @Success 200 {object} models.Banners
+// @Success 200
 // @Failure 400 {object} models.ErrResponse
 // @Failure 401 {object} models.ErrResponse
 // @Failure 403 {object} models.ErrResponse

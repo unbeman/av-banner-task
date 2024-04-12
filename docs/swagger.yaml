@@ -1,13 +1,13 @@
 definitions:
   models.Banner:
     properties:
+      banner_id:
+        type: integer
       content:
         type: string
       created_at:
         type: string
       feature_id:
-        type: integer
-      id:
         type: integer
       is_active:
         type: boolean
@@ -18,10 +18,28 @@ definitions:
       update_at:
         type: string
     type: object
+  models.CreateBannerInput:
+    properties:
+      content:
+        type: string
+      feature_id:
+        type: integer
+      is_active:
+        type: boolean
+      tag_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  models.CreateBannerOutput:
+    properties:
+      banner_id:
+        type: integer
+    type: object
   models.ErrResponse:
     properties:
       error:
-        description: application-level error message, for debugging
+        description: application error message
         type: string
     type: object
   models.UpdateBannerInput:
@@ -101,16 +119,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.Banner'
+          $ref: '#/definitions/models.CreateBannerInput'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            items:
-              $ref: '#/definitions/models.Banner'
-            type: array
+            $ref: '#/definitions/models.CreateBannerOutput'
         "400":
           description: Bad Request
           schema:
@@ -196,10 +212,6 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Banner'
-            type: array
         "400":
           description: Bad Request
           schema:

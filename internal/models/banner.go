@@ -8,7 +8,7 @@ import (
 )
 
 type Banner struct {
-	Id int `json:"id"`
+	Id int `json:"banner_id"`
 
 	FeatureId int   `json:"feature_id"`
 	TagIds    []int `json:"tag_ids"`
@@ -18,17 +18,6 @@ type Banner struct {
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
-}
-
-func (b Banner) Bind(r *http.Request) error {
-	uniqueTags := make(map[int]struct{})
-	for _, tag := range b.TagIds {
-		if _, ok := uniqueTags[tag]; ok {
-			return fmt.Errorf("tag_ids are not unique")
-		}
-		uniqueTags[tag] = struct{}{}
-	}
-	return nil
 }
 
 type Banners []*Banner
@@ -112,6 +101,26 @@ func (i *GetBannersInput) FromURI(r *http.Request) error {
 	return nil
 }
 
+type CreateBannerInput struct {
+	Id        int   `json:"-"`
+	FeatureId int   `json:"feature_id"`
+	TagIds    []int `json:"tag_ids"`
+
+	Content  string `json:"content"`
+	IsActive bool   `json:"is_active"`
+}
+
+func (b CreateBannerInput) Bind(r *http.Request) error {
+	uniqueTags := make(map[int]struct{})
+	for _, tag := range b.TagIds {
+		if _, ok := uniqueTags[tag]; ok {
+			return fmt.Errorf("tag_ids are not unique")
+		}
+		uniqueTags[tag] = struct{}{}
+	}
+	return nil
+}
+
 type CreateBannerOutput struct {
 	BannerId int `json:"banner_id"`
 }
@@ -130,6 +139,13 @@ type UpdateBannerInput struct {
 	IsActive *bool   `json:"is_active,omitempty"`
 }
 
-func (ubi UpdateBannerInput) Bind(r *http.Request) error {
+func (b UpdateBannerInput) Bind(r *http.Request) error {
+	uniqueTags := make(map[int]struct{})
+	for _, tag := range *b.TagIds {
+		if _, ok := uniqueTags[tag]; ok {
+			return fmt.Errorf("tag_ids are not unique")
+		}
+		uniqueTags[tag] = struct{}{}
+	}
 	return nil
 }

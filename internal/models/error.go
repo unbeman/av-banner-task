@@ -11,7 +11,7 @@ type ErrResponse struct {
 	Err            error `json:"-"` // low-level runtime error
 	HTTPStatusCode int   `json:"-"` // http response status code
 
-	ErrorText string `json:"error,omitempty"` // application-level error message, for debugging
+	ErrorText string `json:"error,omitempty"` // application error message
 }
 
 func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
