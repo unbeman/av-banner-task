@@ -3,7 +3,6 @@ package utils
 import (
 	"errors"
 	"fmt"
-
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -50,4 +49,15 @@ func (m *JWTManager) Verify(accessToken string) (*UserClaims, error) {
 	}
 
 	return claims, nil
+}
+
+func (m *JWTManager) Generate(role int) (string, error) {
+	claims := UserClaims{
+		UserRole: role,
+	}
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(m.privateKey)
+	if err != nil {
+		return "", fmt.Errorf("could not create signed token: %w", err)
+	}
+	return token, nil
 }

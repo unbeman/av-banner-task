@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
@@ -95,7 +96,7 @@ func (h HttpHandler) GetUserBanner(writer http.ResponseWriter, request *http.Req
 		render.Render(writer, request, models.ErrInternalServerError(err))
 		return
 	}
-	render.Render(writer, request, out)
+	render.JSON(writer, request, json.RawMessage(*out))
 }
 
 // GetBanners godoc
@@ -126,7 +127,7 @@ func (h HttpHandler) GetBanners(writer http.ResponseWriter, request *http.Reques
 		render.Render(writer, request, models.ErrInternalServerError(err))
 		return
 	}
-	render.Render(writer, request, out)
+	render.JSON(writer, request, out)
 }
 
 // CreateBanner godoc
@@ -160,7 +161,7 @@ func (h HttpHandler) CreateBanner(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 	render.Status(request, http.StatusCreated)
-	render.Render(writer, request, out)
+	render.JSON(writer, request, out)
 }
 
 // UpdateBanner godoc

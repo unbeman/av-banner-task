@@ -52,6 +52,10 @@ func (r RedisManager) GetBanner(ctx context.Context, featureId, tagId int) (*str
 	return &bannerContent, nil
 }
 
+func (r RedisManager) Clear(ctx context.Context) {
+	r.client.FlushAll(ctx)
+}
+
 func (r RedisManager) Shutdown() {
 	r.client.Close()
 	log.Info("redis client closed")

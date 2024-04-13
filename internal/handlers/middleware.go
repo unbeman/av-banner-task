@@ -26,16 +26,16 @@ func (h HttpHandler) userAuthorization(next http.Handler) http.Handler {
 		accessToken := getTokenFromRequest(request)
 		userClaims, err := h.jwtManager.Verify(accessToken)
 		if errors.Is(err, utils.ErrInvalidToken) {
-			render.JSON(writer, request, models.ErrUnauthorized(err))
+			render.Render(writer, request, models.ErrUnauthorized(err))
 			return
 		}
 		if err != nil {
-			render.JSON(writer, request, models.ErrInternalServerError(err))
+			render.Render(writer, request, models.ErrInternalServerError(err))
 			return
 		}
 
 		if userClaims.UserRole != ADMIN && userClaims.UserRole != USER {
-			render.JSON(writer, request, models.ErrForbidden(fmt.Errorf("invalid user role")))
+			render.Render(writer, request, models.ErrForbidden(fmt.Errorf("invalid user role")))
 			return
 		}
 		contextWithAccess := context.WithValue(request.Context(), AccessContextKey, userClaims.UserRole)
@@ -48,16 +48,16 @@ func (h HttpHandler) adminAuthorization(next http.Handler) http.Handler {
 		accessToken := getTokenFromRequest(request)
 		userClaims, err := h.jwtManager.Verify(accessToken)
 		if errors.Is(err, utils.ErrInvalidToken) {
-			render.JSON(writer, request, models.ErrUnauthorized(err))
+			render.Render(writer, request, models.ErrUnauthorized(err))
 			return
 		}
 		if err != nil {
-			render.JSON(writer, request, models.ErrInternalServerError(err))
+			render.Render(writer, request, models.ErrInternalServerError(err))
 			return
 		}
 
 		if userClaims.UserRole != ADMIN {
-			render.JSON(writer, request, models.ErrForbidden(fmt.Errorf("no access with given token")))
+			render.Render(writer, request, models.ErrForbidden(fmt.Errorf("no access with given token")))
 			return
 		}
 

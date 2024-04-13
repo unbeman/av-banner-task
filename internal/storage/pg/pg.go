@@ -321,3 +321,8 @@ func checkConflictErr(err error) error {
 	}
 	return err
 }
+
+func (p *PGStorage) ReleaseBanners(ctx context.Context) error {
+	_, err := p.connection.Exec(ctx, "truncate table banner restart identity cascade")
+	return err
+}

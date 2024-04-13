@@ -22,10 +22,6 @@ type Banner struct {
 
 type Banners []*Banner
 
-func (b Banners) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
 type GetBannerInput struct {
 	TagId           int
 	FeatureId       int
@@ -46,14 +42,20 @@ func (i *GetBannerInput) FromURI(r *http.Request) error {
 		return err
 	}
 	i.FeatureId = featureId
+
+	useLastRevisionParam := r.URL.Query().Get("use_last_revision")
+	if useLastRevisionParam != "" {
+		useLastRevision, err := strconv.ParseBool(useLastRevisionParam)
+		if err != nil {
+			return err
+		}
+		i.UseLastRevision = useLastRevision
+	}
+
 	return nil
 }
 
 type GetBannerOutput string
-
-func (gbo GetBannerOutput) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
 
 type GetBannersInput struct {
 	TagId     *int
@@ -123,10 +125,6 @@ func (b CreateBannerInput) Bind(r *http.Request) error {
 
 type CreateBannerOutput struct {
 	BannerId int `json:"banner_id"`
-}
-
-func (cbo CreateBannerOutput) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
 }
 
 type UpdateBannerInput struct {
