@@ -16,7 +16,7 @@ type HTTPServer struct {
 	server *http.Server
 }
 
-func NewHTTPServer(addr string, ctrl *controller.Controller, jwtManager *utils.JWTManager) (*HTTPServer, error) {
+func NewHTTPServer(ctrl *controller.Controller, jwtManager *utils.JWTManager) (*HTTPServer, error) {
 	handler, err := handlers.NewHttpHandler(ctrl, jwtManager)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup HTTP server: %w", err)
@@ -24,7 +24,6 @@ func NewHTTPServer(addr string, ctrl *controller.Controller, jwtManager *utils.J
 
 	hs := &HTTPServer{
 		server: &http.Server{
-			Addr:    addr,
 			Handler: handler,
 		},
 	}
@@ -40,7 +39,7 @@ func (h *HTTPServer) GetAddress() string {
 }
 
 func (h *HTTPServer) Run() {
-	log.Info("starting HTTP server on ", h.GetAddress())
+	log.Info("starting HTTP server")
 	h.server.ListenAndServe()
 }
 

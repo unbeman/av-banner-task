@@ -1,16 +1,23 @@
-DB_URL=postgresql://postgres:password@localhost:6500/banner-keeper?sslmode=disable
+include ./test-app.env
+export
 
-create-db:
-	docker exec -it banner-database createdb --username=postgres --owner=postgres banner-keeper
+dc-up:
+	docker compose -f docker-compose.yml up
 
-drop-db:
-	docker exec -it banner-database dropdb banner-keeper
+dc-up-d:
+	docker compose -f docker-compose.yml up -d
 
-migrate-up:
-	migrate -path migrations -database "$(DB_URL)" -verbose up
+dc-stop:
+	docker compose -f docker-compose.yml down
 
-migrate-down:
-	migrate -path migrations -database "$(DB_URL)" -verbose down
+dc-down:
+	docker compose -f docker-compose.yml down
 
 swagger:
 	swag init -g cmd/main.go
+
+integration-test:
+	docker compose -f docker-compose-api-test.yml up -d
+	docker exec -i test-banner-database psql -U postgres -d banner-keeper -a < api_test_pg_script/fill_tables.sql
+	go test -tags=integration ./... -v
+	docker compose -f docker-compose-api-test.yml down

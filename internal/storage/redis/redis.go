@@ -52,6 +52,11 @@ func (r RedisManager) GetBanner(ctx context.Context, featureId, tagId int) (*str
 	return &bannerContent, nil
 }
 
+func (r RedisManager) Ping(ctx context.Context) error {
+	status := r.client.Ping(ctx)
+	return status.Err()
+}
+
 func (r RedisManager) Clear(ctx context.Context) {
 	r.client.FlushAll(ctx)
 }

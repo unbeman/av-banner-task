@@ -1,8 +1,11 @@
+//go:build integration
+
 package handlers
 
 import (
 	"context"
 	"fmt"
+	"github.com/caarlos0/env/v8"
 	"github.com/steinfletcher/apitest"
 	"net/http"
 	"testing"
@@ -10,7 +13,6 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/unbeman/av-banner-task/internal/config"
 	"github.com/unbeman/av-banner-task/internal/controller"
 	"github.com/unbeman/av-banner-task/internal/models"
 	"github.com/unbeman/av-banner-task/internal/storage/pg"
@@ -19,12 +21,10 @@ import (
 )
 
 type TestConfig struct {
-	ServerAddress           string        `env:"TEST_SERVER_ADDRESS"`
 	PostgreSqlDSN           string        `env:"TEST_POSTGRES_DSN"`
 	JWTPrivateKey           string        `env:"TEST_JWT_PRIVATE_KEY"`
 	RedisURl                string        `env:"TEST_REDIS_URL"`
 	RedisExpirationDuration time.Duration `env:"TEST_REDIS_EXPIRATION_DURATION"`
-	LogLevel                string        `env:"TEST_LOG_LEVEL"`
 }
 
 type BannerSuite struct {
@@ -38,20 +38,32 @@ type BannerSuite struct {
 func (s *BannerSuite) SetupSuite() {
 	ctx := context.Background()
 
-	//cfg := TestConfig{}
-	//err := env.Parse(&cfg)
-	//s.Nil(err)
-
-	cfg, err := config.GetConfig()
-	s.Nil(err)
+	cfg := TestConfig{}
+	err := env.Parse(&cfg)
+	if err != nil {
+		s.T().Errorf("Не удалось распарсить конфиг :%s", err)
+		return
+	}
 
 	pg, err := pg.NewPG(ctx, cfg.PostgreSqlDSN)
 	s.Nil(err)
+
+	err = pg.Ping(ctx)
+	if err != nil {
+		s.T().Errorf("PostgreSQL не отвечает :%s", err)
+		return
+	}
 
 	s.database = pg
 
 	redisManager, err := redis.NewRedisManager(cfg.RedisURl, cfg.RedisExpirationDuration)
 	s.Nil(err)
+
+	err = redisManager.Ping(ctx)
+	if err != nil {
+		s.T().Errorf("Redis не отвечает :%s", err)
+		return
+	}
 
 	s.cache = redisManager
 

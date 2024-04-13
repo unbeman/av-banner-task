@@ -9,7 +9,6 @@ import (
 
 // Default values for config.
 var (
-	ServerAddressDefault           = "0.0.0.0:8080"
 	PostgreSqlDSNDefault           = "postgresql://postgres:password@localhost:6500/banner-keeper?sslmode=disable"
 	JWTPrivateKeyDefault           = "secret-key"
 	RedisURlDefault                = "redis://default:redis-password@localhost:6379/0"
@@ -19,12 +18,11 @@ var (
 
 // Config describes server's configuration, including setup for its components.
 type Config struct {
-	ServerAddress           string        `env:"SERVER_ADDRESS"`
 	PostgreSqlDSN           string        `env:"POSTGRES_DSN"`
 	JWTPrivateKey           string        `env:"JWT_PRIVATE_KEY"`
 	RedisURl                string        `env:"REDIS_URL"`
 	RedisExpirationDuration time.Duration `env:"REDIS_EXPIRATION_DURATION"`
-	LogLevel                string
+	LogLevel                string        `env:"LOG_LEVEL"`
 }
 
 // parseEnv gets config setup from environment variables.
@@ -35,7 +33,6 @@ func (cfg *Config) parseEnv() error {
 // GetConfig returns server config.
 func GetConfig() (Config, error) {
 	cfg := Config{
-		ServerAddress:           ServerAddressDefault,
 		PostgreSqlDSN:           PostgreSqlDSNDefault,
 		JWTPrivateKey:           JWTPrivateKeyDefault,
 		RedisURl:                RedisURlDefault,

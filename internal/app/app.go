@@ -48,7 +48,7 @@ func GetBannerApplication(ctx context.Context, cfg config.Config) (*BannerApplic
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
 
-	hs, err := NewHTTPServer(cfg.ServerAddress, ctrl, jwtManager)
+	hs, err := NewHTTPServer(ctrl, jwtManager)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't setup application: %w", err)
 	}
