@@ -138,12 +138,14 @@ type UpdateBannerInput struct {
 }
 
 func (b UpdateBannerInput) Bind(r *http.Request) error {
-	uniqueTags := make(map[int]struct{})
-	for _, tag := range *b.TagIds {
-		if _, ok := uniqueTags[tag]; ok {
-			return fmt.Errorf("tag_ids are not unique")
+	if b.TagIds != nil {
+		uniqueTags := make(map[int]struct{})
+		for _, tag := range *b.TagIds {
+			if _, ok := uniqueTags[tag]; ok {
+				return fmt.Errorf("tag_ids are not unique")
+			}
+			uniqueTags[tag] = struct{}{}
 		}
-		uniqueTags[tag] = struct{}{}
 	}
 	return nil
 }

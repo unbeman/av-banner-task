@@ -152,6 +152,10 @@ func (h HttpHandler) CreateBanner(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 	out, err := h.controller.CreateBanner(request.Context(), input)
+	if errors.Is(err, storage.ErrNotFound) {
+		render.Render(writer, request, models.ErrBadRequest(err))
+		return
+	}
 	if errors.Is(err, storage.ErrConflict) {
 		render.Render(writer, request, models.ErrBadRequest(err))
 		return
@@ -198,11 +202,11 @@ func (h HttpHandler) UpdateBanner(writer http.ResponseWriter, request *http.Requ
 
 	err = h.controller.UpdateBanner(request.Context(), input)
 	if errors.Is(err, storage.ErrNotFound) {
-		render.Render(writer, request, models.ErrBadRequest(err))
+		render.Render(writer, request, models.ErrNotFound(err))
 		return
 	}
 	if errors.Is(err, storage.ErrConflict) {
-		render.Render(writer, request, models.ErrBadRequest(err))
+		render.Render(writer, request, models.ErrConflict(err))
 		return
 	}
 	if err != nil {
@@ -234,7 +238,11 @@ func (h HttpHandler) DeleteBanner(writer http.ResponseWriter, request *http.Requ
 	}
 	err = h.controller.DeleteBanner(request.Context(), bannerId)
 	if errors.Is(err, storage.ErrNotFound) {
-		render.Render(writer, request, models.ErrBadRequest(err))
+		render.Render(writer, request, models.ErrNotFound(err))
+		return
+	}
+	if errors.Is(err, storage.ErrConflict) {
+		render.Render(writer, request, models.ErrConflict(err))
 		return
 	}
 	if err != nil {
@@ -242,7 +250,7 @@ func (h HttpHandler) DeleteBanner(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 
-	render.Status(request, http.StatusNoContent)
+	writer.WriteHeader(http.StatusNoContent)
 }
 
 func (h HttpHandler) getAccessLevelFromContext(ctx context.Context) int {

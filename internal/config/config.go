@@ -9,7 +9,7 @@ import (
 
 // Default values for config.
 var (
-	PostgreSqlDSNDefault           = "postgresql://postgres:password@localhost:6500/banner-keeper?sslmode=disable"
+	PostgreSqlDSNDefault           = "postgresql://postgres:password@localhost:5432/banner-keeper?sslmode=disable"
 	JWTPrivateKeyDefault           = "secret-key"
 	RedisURlDefault                = "redis://default:redis-password@localhost:6379/0"
 	RedisExpirationDurationDefault = 5 * time.Minute

@@ -159,7 +159,7 @@ func (p *PGStorage) CreateBanner(ctx context.Context, banner *models.Banner) (*m
 		},
 	).Scan(&banner.Id)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't insert banner: %w", err)
+		return nil, fmt.Errorf("couldn't insert banner: %w", checkConflictErr(err))
 	}
 
 	_, err = tx.CopyFrom(
@@ -183,7 +183,7 @@ func (p *PGStorage) updateBannerFeaturesAndTags(ctx context.Context, tx pgx.Tx, 
 	case banner.FeatureId != nil && banner.TagIds != nil: // обновить и фичу и тэги
 		_, err := tx.Exec(ctx, updateBannerFeatureQuery, banner.FeatureId, banner.Id) // обвновляем фичу в баннере
 		if err != nil {
-			return fmt.Errorf("can't update banner feature_id: %w", err)
+			return fmt.Errorf("can't update banner feature_id: %w", checkConflictErr(err))
 		}
 
 		_, err = tx.Exec(ctx, deleteBannerTagsQuery, banner.Id) // удаляем тэги баннера
@@ -224,7 +224,7 @@ func (p *PGStorage) updateBannerFeaturesAndTags(ctx context.Context, tx pgx.Tx, 
 	case banner.FeatureId != nil && banner.TagIds == nil: // обновить только фичу
 		_, err := tx.Exec(ctx, updateBannerFeatureQuery, banner.FeatureId, banner.Id) // обвновляем фичу в баннере
 		if err != nil {
-			return fmt.Errorf("can't update banner feature_id: %w", err)
+			return fmt.Errorf("can't update banner feature_id: %w", checkConflictErr(err))
 		}
 		_, err = tx.Exec(ctx, updateBannerFeatureInBFTQuery, banner.FeatureId, banner.Id) // обвновляем фичу связке баннера с тэгами
 		if err != nil {
@@ -237,16 +237,23 @@ func (p *PGStorage) updateBannerFeaturesAndTags(ctx context.Context, tx pgx.Tx, 
 
 func (p *PGStorage) updateBannerInfo(ctx context.Context, tx pgx.Tx, banner *models.UpdateBannerInput) error {
 	if banner.IsActive != nil {
-		_, err := tx.Exec(ctx, updateBannerActiveQuery, *banner.IsActive, banner.Id)
+		cmd, err := tx.Exec(ctx, updateBannerActiveQuery, *banner.IsActive, banner.Id)
 		if err != nil {
 			return fmt.Errorf("can't update banner active: %w", err)
+		}
+		fmt.Println(cmd.RowsAffected())
+		if cmd.RowsAffected() == 0 {
+			return fmt.Errorf("banner with given id (%d): %w", storage.ErrNotFound)
 		}
 	}
 
 	if banner.Content != nil {
-		_, err := tx.Exec(ctx, updateBannerContentQuery, *banner.Content, banner.Id)
+		cmd, err := tx.Exec(ctx, updateBannerContentQuery, *banner.Content, banner.Id)
 		if err != nil {
-			return fmt.Errorf("can't update banner content: %w", err)
+			return fmt.Errorf("can't update banner content: %w", checkConflictErr(err))
+		}
+		if cmd.RowsAffected() == 0 {
+			return fmt.Errorf("banner with given id (%d): %w", storage.ErrNotFound)
 		}
 	}
 	return nil
@@ -313,15 +320,15 @@ func checkConflictErr(err error) error {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		if pgErr.Code == pgerrcode.ForeignKeyViolation {
-			return storage.ErrNotFound
+			return fmt.Errorf("given banner, feature or tag: %w", storage.ErrNotFound)
 		}
 		if pgErr.Code == pgerrcode.UniqueViolation {
-			return storage.ErrConflict
+			return fmt.Errorf("given feature or tag: %w", storage.ErrConflict)
 		}
 	}
 	return err
 }
 
-func (p PGStorage) Ping(ctx context.Context) error {
+func (p *PGStorage) Ping(ctx context.Context) error {
 	return p.connection.Ping(ctx)
 }

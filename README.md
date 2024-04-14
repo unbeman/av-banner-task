@@ -11,12 +11,17 @@
 ---
 
 #### Приложение:
-- http://127.0.0.1:8080
+- Запущенное приложение будет доступно по адресу http://127.0.0.1:8080
+
+---
+
+### API методы:
+Примеры запросов описанные для `Postman` в `docs/banner_service.postman_collection.json`
 
 ---
 
 #### Swagger UI:
-- http://127.0.0.1:8080/swagger/index.html
+- Swagger описание будет доступно по адресу http://127.0.0.1:8080/swagger/index.html
 
 ---
 

@@ -56,7 +56,7 @@ services:
       cache:
         condition: service_healthy
     ports:
-      - "8088:8080"
+      - "8080:8080"
     command: ./banner-service
 volumes:
   data:
