@@ -25,6 +25,7 @@ func NewHTTPServer(ctrl *controller.Controller, jwtManager *utils.JWTManager) (*
 	hs := &HTTPServer{
 		server: &http.Server{
 			Handler: handler,
+			Addr:    ":8080",
 		},
 	}
 	return hs, nil

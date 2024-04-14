@@ -325,8 +325,3 @@ func checkConflictErr(err error) error {
 func (p PGStorage) Ping(ctx context.Context) error {
 	return p.connection.Ping(ctx)
 }
-
-func (p *PGStorage) ReleaseBanners(ctx context.Context) error {
-	_, err := p.connection.Exec(ctx, "truncate table banner restart identity cascade")
-	return err
-}
